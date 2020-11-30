@@ -1,0 +1,378 @@
+1. tabel, database, database server
+ 
+mysql 에서는 결국 테이블에 데이터를 넣는 것이다.
+
+스키마라는 것은 표를 그룹핑 하는 폴더를 의미한다.
+여기서 table들을 그룹핑할 때 비슷한 특성들을 묶어야 한다.
+
+이러한 여러 스키마들이 모은 것들을 데이터베이스 서버라고 한다.
+
+2. MySQL 서버 접속
+
+데이터베이스는 자체적인 보안 체계를 가지고 있기 때문에 보다 안전하게 데이터들을 보관할 수 있다.
+또한 권한 기능이 있다. 
+각 사용자마다 table에 대한 권한을 차등적으로 줄 수 있다.
+이런 힘든 기능들을 자체적으로 가지고있다.
+
+/mysql -uroot 여기서 root라는 기본유저를 사용하여 접속한다는 의미.
+여기서 root는 관리자라는 의미라서 모든 권한이 열려있다.
+/mysql -uroot -p 이렇게 치면, 비밀번호가 설정되어있으면 비밀번호를 치고
+설정되어있지않다면, 그냥 넘어가게 된다.
+
+3. MySQL 스키마의 사용
+
+데이터베이스 만드는 법 :
+
+CREATE DATABASE opentutorials;(내가 만들고 싶은 스키마의 이름)
+
+데이터베이스 지우는 법:
+DROP DATABASE opentutorials;
+
+내가 만든 데이터베이스 보는 법:
+SHOW DATABASES;
+
+내가 사용하고 싶은 데이터베이스 선택하는 법: >> 이렇게 되면 opentutorials 라는 테이블을 내가 사용하겠다 라는 의미.
+USE opentutorials;
+
+
+4. SQL과 테이블 구조
+
+SQL : Structured   Query   Language
+       구조화된   요청한다  언어
+
+데이터베이스도 이해할 수 있고 나도 이해할 수 있는 언어.
+
+수평으로 되어 있는 행 = row , record, 행
+수직으로 되어 있는 열 = column, 열
+
+
+5. MySQL 테이블의 생성
+
+******************************************
+mysql> CREATE TABLE topic(
+    -> id INT(11) NOT NULL AUTO_INCREMENT,
+    -> title VARCHAR(100) NOT NULL,
+    -> description TEXT NULL,
+    -> created DATETIME NOT NULL,
+    -> author VARCHAR(30) NULL,
+    -> profile VARCHAR(100) NULL
+    -> , PRIMARY KEY(id));
+******************************************
+
+Column의 데이터 타입을 정할 수 있다.
+id INT(11) NOT NULL AUTO_INCREMENT 
+여기서 NOT NULL의 의미는 값이 없는것을 허용하지 않겠다.
+AUTO_INCREMENT의 의미는 ID열의 값들을 1씩 자동으로 키우라는 의미인데, 이렇게 하는 이유는 삭제나 그 데이터값을 부를때 효과적이기 때문이다.
+
+PRIMARY KEY는 중요단어라는 뜻으로, 중복을 막는데 의미가 있다.
+각각의 행을 식별하는 식별자라고 보면 된다.
+
+
+6. MySQL의 CRUD
+
+Create, Read, Update, Delete
+
+
+7. SQL의 INSERT 구문
+
+
+mysql> DESC topic
+topic이라는 테이블의 상태를 보는 법
+
+mysql> INSERT INTO topic (title,description,created,author,profile) VALUES('MySQL','MySQL is ...',NOW(),'egoing','developer');
+데이터를 넣는 것과 순서가 같아야 한
+
+
+mysql> SELECT * FROM topic;
+topic 테이블에 데이터들이 잘 들어갔는지 보는 방법
+
+mysql> DESC topic
+    -> ;
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| id          | int          | NO   | PRI | NULL    | auto_increment |
+| title       | varchar(100) | NO   |     | NULL    |                |
+| description | text         | YES  |     | NULL    |                |
+| created     | datetime     | NO   |     | NULL    |                |
+| author      | varchar(30)  | YES  |     | NULL    |                |
+| profile     | varchar(100) | YES  |     | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+
+6 rows in set (0.00 sec)
+
+mysql> INSERT INTO topic (title,description,created,author,profile) VALUES('MySQL','MySQL is ...',NOW(),'egoing','developer');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM topic;
++----+-------+--------------+---------------------+--------+-----------+
+| id | title | description  | created             | author | profile   |
++----+-------+--------------+---------------------+--------+-----------+
+|  1 | MySQL | MySQL is ... | 2020-11-30 16:38:55 | egoing | developer |
++----+-------+--------------+---------------------+--------+-----------+
+1 row in set (0.00 sec)
+
+mysql> INSERT INTO topic (title,description,created,author,profile) VALUES('Oracle','Oracle is ...',NOW(),'egoing','developer');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM topic;
++----+--------+---------------+---------------------+--------+-----------+
+| id | title  | description   | created             | author | profile   |
++----+--------+---------------+---------------------+--------+-----------+
+|  1 | MySQL  | MySQL is ...  | 2020-11-30 16:38:55 | egoing | developer |
+|  2 | Oracle | Oracle is ... | 2020-11-30 16:41:32 | egoing | developer |
++----+--------+---------------+---------------------+--------+-----------+
+2 rows in set (0.00 sec)
+
+
+
+8. SQL의 SELECT 구문
+
+SELECT ---- FROM topic;
+이렇게 되면, 내가 원하는 데이터들만 출력할 수 있게끔 할 수 있다.
+---- 안에는 열의 정보를 써야한다.
+
+
+mysql> SELECT id,title,created,author FROM topic;
++----+--------+---------------------+--------+
+| id | title  | created             | author |
++----+--------+---------------------+--------+
+|  1 | MySQL  | 2020-11-30 16:38:55 | egoing |
+|  2 | Oracle | 2020-11-30 16:41:32 | egoing |
++----+--------+---------------------+--------+
+2 rows in set (0.00 sec)
+
+
+
+
+9. SQL의 UPDATE 구문
+
+
+mysql> SELECT * FROM topic
+    -> ;
++----+--------+---------------+---------------------+--------+-----------+
+| id | title  | description   | created             | author | profile   |
++----+--------+---------------+---------------------+--------+-----------+
+|  1 | MySQL  | MySQL is ...  | 2020-11-30 16:38:55 | egoing | developer |
+|  2 | Oracle | Oracle is ... | 2020-11-30 16:41:32 | egoing | developer |
++----+--------+---------------+---------------------+--------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> UPDATE topic SET description='ORACLE is ~~~', title='Oracle' WHERE id=2; <<<<
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM topic
+    -> ;
++----+--------+---------------+---------------------+--------+-----------+
+| id | title  | description   | created             | author | profile   |
++----+--------+---------------+---------------------+--------+-----------+
+|  1 | MySQL  | MySQL is ...  | 2020-11-30 16:38:55 | egoing | developer |
+|  2 | Oracle | ORACLE is ~~~ | 2020-11-30 16:41:32 | egoing | developer |
++----+--------+---------------+---------------------+--------+-----------+
+2 rows in set (0.00 sec)
+
+
+id=2에 대한 description이 바뀐 것을 볼 수 있다
+주의할 것은 WHERE를 빠트리면 안된다.
+빠트리면 모든 행이 바뀜.
+
+
+10. SQL의 DELETE 구문
+
+mysql> SELECT * FROM topic;
++----+--------+---------------+---------------------+--------+-----------+
+| id | title  | description   | created             | author | profile   |
++----+--------+---------------+---------------------+--------+-----------+
+|  1 | MySQL  | MySQL is ...  | 2020-11-30 16:38:55 | egoing | developer |
+|  2 | Oracle | ORACLE is ~~~ | 2020-11-30 16:41:32 | egoing | developer |
++----+--------+---------------+---------------------+--------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> DELETE FROM topic WHERE id=2;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM topic;
++----+-------+--------------+---------------------+--------+-----------+
+| id | title | description  | created             | author | profile   |
++----+-------+--------------+---------------------+--------+-----------+
+|  1 | MySQL | MySQL is ... | 2020-11-30 16:38:55 | egoing | developer |
++----+-------+--------------+---------------------+--------+-----------+
+1 row in set (0.00 sec)
+
+
+id = 2 인 행이 없어진 것을 볼 수 있다.
+또 주의할 것은 where를 빠트리면 안된다!
+
+
+11. 관계형 데이터베이스의 필요성
+
+관계형 데이터베이스가 필요한 이유는 데이터에서 중복이 일어날 경우, 수억개의 데이터에서 수정이 필요한 경우
+수정을 한다고 가정했을 때 어렵다. 
+
+따라서 중복을 제거해서 또 다른 테이블을 만들어서 관리할 수 있다.
+하나의 토픽 테이블과 두개의 토픽 테이블로 나눈것을 비교했을 때, 
+하나의 테이블로 본 것은 직관적으로 볼 수 있다. 그런데 별도로 테이블을 2개로 쪼개서 참조값만을 보게 된다면
+그 행에 해당하는 값들을 비교해가며 봐야된다는 불편함이 있다.
+
+따라서 중복을 발생시키지 않으면서도, 실제로 테이블을 볼 때 하나의 테이블로 합쳐진 것을 보게된다면 편해질 것이다.
+
+
+12. 테이블 분리하기
+
+
+테이블의 이름 변경하는 법
+mysql> SHOW TABLES;
++-------------------------+
+| Tables_in_opentutorials |
++-------------------------+
+| topic                   |
++-------------------------+
+1 row in set (0.00 sec)
+
+mysql> RENAME TABLE topic TO topic_backup;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> SHOW TABLES;
++-------------------------+
+| Tables_in_opentutorials |
++-------------------------+
+| topic_backup            |
++-------------------------+
+1 row in set (0.00 sec)
+
+
+13. 관계형 데이터베이스의 꽃 JOIN
+
+테이블과 테이블이 JOIN하기 위해서는 간단히 풀어말하자며는
+1번 테이블의 정보랑 1번테이블의 정보와 같은 계열의 정보인 2번테이블의 정보의 1번이랑 붙여라 이런식으로 JOIN하게 됨.
+
+
+mysql> SELECT * FROM topic
+    -> ;
++----+------------+-------------------+---------------------+-----------+
+| id | title      | description       | created             | author_id |
++----+------------+-------------------+---------------------+-----------+
+|  1 | MySQL      | MySQL is...       | 2018-01-01 12:10:11 |         1 |
+|  2 | Oracle     | Oracle is ...     | 2018-01-03 13:01:10 |         1 |
+|  3 | SQL Server | SQL Server is ... | 2018-01-20 11:01:10 |         2 |
+|  4 | PostgreSQL | PostgreSQL is ... | 2018-01-23 01:03:03 |         3 |
+|  5 | MongoDB    | MongoDB is ...    | 2018-01-30 12:31:03 |         1 |
++----+------------+-------------------+---------------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM author;
++----+--------+---------------------------+
+| id | name   | profile                   |
++----+--------+---------------------------+
+|  1 | egoing | developer                 |
+|  2 | duru   | database administrator    |
+|  3 | taeho  | data scientist, developer |
++----+--------+---------------------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM topic LEFT JOIN author;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> SELECT * FROM topic LEFT JOIN author ON topic.author_id = author.id;
++----+------------+-------------------+---------------------+-----------+------+--------+---------------------------+
+| id | title      | description       | created             | author_id | id   | name   | profile                   |
++----+------------+-------------------+---------------------+-----------+------+--------+---------------------------+
+|  1 | MySQL      | MySQL is...       | 2018-01-01 12:10:11 |         1 |    1 | egoing | developer                 |
+|  2 | Oracle     | Oracle is ...     | 2018-01-03 13:01:10 |         1 |    1 | egoing | developer                 |
+|  3 | SQL Server | SQL Server is ... | 2018-01-20 11:01:10 |         2 |    2 | duru   | database administrator    |
+|  4 | PostgreSQL | PostgreSQL is ... | 2018-01-23 01:03:03 |         3 |    3 | taeho  | data scientist, developer |
+|  5 | MongoDB    | MongoDB is ...    | 2018-01-30 12:31:03 |         1 |    1 | egoing | developer                 |
++----+------------+-------------------+---------------------+-----------+------+--------+---------------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT id,title,description,created,name,profile FROM topic LEFT JOIN author ON topic.author_id = author.id;
+ERROR 1052 (23000): Column 'id' in field list is ambiguous
+mysql> SELECT topic.id,title,description,created,name,profile FROM topic LEFT JOIN author ON topic.author_id = author.id;
++----+------------+-------------------+---------------------+--------+---------------------------+
+| id | title      | description       | created             | name   | profile                   |
++----+------------+-------------------+---------------------+--------+---------------------------+
+|  1 | MySQL      | MySQL is...       | 2018-01-01 12:10:11 | egoing | developer                 |
+|  2 | Oracle     | Oracle is ...     | 2018-01-03 13:01:10 | egoing | developer                 |
+|  3 | SQL Server | SQL Server is ... | 2018-01-20 11:01:10 | duru   | database administrator    |
+|  4 | PostgreSQL | PostgreSQL is ... | 2018-01-23 01:03:03 | taeho  | data scientist, developer |
+|  5 | MongoDB    | MongoDB is ...    | 2018-01-30 12:31:03 | egoing | developer                 |
++----+------------+-------------------+---------------------+--------+---------------------------+
+5 rows in set (0.00 sec)
+
+여기서 ambiguous가 뜬 이유는 id가 애매모호하다는 얘기인데, 이 id값이 topic테이블인지, author테이블인지 애매모호하다는 뜻이다
+따라서 id값을 특정화 할 수 있는 topic.id로 하게 된다면 문제 해결.
+참고로 SELECT * 에서 *것은 모든 행을 의미한다.
+따라서 *대신 원하는 행만 입력하게 되면 원하는 행만 출력할 수 있다.
+
+
+14. 인터넷과 데이터베이스
+
+인터넷이 동작하기 위해서는 컴퓨터가 몇 대가 필요할까 ? >> 2대가 필요하다.
+인터넷의 의미는 각자 흩어져있는 컴퓨터들이 인터넷으로 연결되면서 컴퓨터들간의 사회가 만들어진다는 의미이다.
+한대가 갖고있는 의미를 초월했다는 의미이다...
+
+한대의 컴퓨터는 정보를 다른 컴퓨터에게 요청한다. 또 다른 컴퓨터는 그 요청에 응답한다.
+요청하는 쪽을 client, 응답하는 쪽은 server라고 한다.
+인터넷이라는 것은 갑과 을에 해당하는 컴퓨터들이 요청하고 응답하는 것의 반복이다.=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
